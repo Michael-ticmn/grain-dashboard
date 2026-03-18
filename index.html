@@ -45,9 +45,7 @@
   .brand { font-size: 17px; font-weight: 700; letter-spacing: 3px; color: var(--txt1); text-transform: uppercase; }
   .brand span { color: var(--txt3); font-size: 12px; margin-left: 14px; letter-spacing: 1px; }
   .brand em { color: var(--corn); font-style: normal; }
-  .clock-bar { font-size: 13px; color: var(--txt3); display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-  .clock-time { font-size: 19px; color: var(--txt1); font-weight: 700; letter-spacing: 1px; }
-  .clock-date { font-size: 11px; color: var(--txt3); letter-spacing: 0.5px; }
+  .clock-bar { font-size: 13px; color: var(--txt3); display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
   .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--up); margin-right: 6px; animation: pulse 2.5s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
@@ -252,8 +250,7 @@
   <div class="brand"><em>Grain</em> Market <span>DASHBOARD</span></div>
   <div class="clock-bar">
     <span><span class="status-dot"></span><span id="status-txt">Loading...</span></span>
-    <div class="clock-time" id="clock-txt">--:-- --</div>
-    <div class="clock-date" id="clock-date">--- --, ----</div>
+    <div style="font-size:12px;color:var(--txt3);" id="last-updated-txt">—</div>
   </div>
 </div>
 
@@ -828,18 +825,15 @@
 
 
 <script>
-// ===================== CLOCK =====================
-function tick(){
-  const n=new Date();
-  const h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
-  const ampm=h>=12?'PM':'AM';
-  const hh=h%12||12;
-  document.getElementById('clock-txt').textContent=hh+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s+' '+ampm;
-  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('clock-date').textContent=days[n.getDay()]+', '+months[n.getMonth()]+' '+n.getDate()+', '+n.getFullYear();
+// ===================== LAST UPDATED =====================
+function markUpdated(){
+  const el=document.getElementById('last-updated-txt');
+  if(!el) return;
+  const d=new Date();
+  let h=d.getHours(),m=d.getMinutes();
+  const ampm=h>=12?'pm':'am'; h=h%12||12;
+  el.textContent='Updated '+h+':'+(m<10?'0':'')+m+' '+ampm;
 }
-setInterval(tick,1000);tick();
 
 // ===================== TABS =====================
 function switchTab(id){
@@ -1212,6 +1206,7 @@ async function loadPrices(){
 
   buildCashTable();
   updateInsight();
+  markUpdated();
 }
 
 function updateInsight(){
@@ -1258,6 +1253,7 @@ async function loadWeather(ulat,ulon){
     buildCashTable();
     rebuildElevatorDirectory();
   }
+  markUpdated();
 }
 
 // ── REBUILD ELEVATOR DIRECTORY TAB ─────────────────────────────────────────
@@ -1425,6 +1421,10 @@ calcGrain();
 calcSoy();
 rebuildElevatorDirectory();
 updateRegionBadge();
+
+// Auto-refresh: prices every 15 min, weather every 30 min
+setInterval(loadPrices, 15 * 60 * 1000);
+setInterval(()=>{ if(userLat) loadWeather(userLat, userLon); }, 30 * 60 * 1000);
 </script>
 </body>
 </html>
