@@ -832,7 +832,9 @@ function markUpdated(){
   const d=new Date();
   let h=d.getHours(),m=d.getMinutes();
   const ampm=h>=12?'pm':'am'; h=h%12||12;
-  el.textContent='Updated '+h+':'+(m<10?'0':'')+m+' '+ampm;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  el.textContent='Updated '+h+':'+(m<10?'0':'')+m+' '+ampm+' · '+days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
 }
 
 // ===================== TABS =====================
