@@ -256,7 +256,7 @@
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('prices')">Prices</div>
-  <div class="tab" onclick="switchTab('elevators')">Elevators</div>
+  <div class="tab" onclick="switchTab('elevators')">Local Buyers</div>
   <div class="tab" onclick="switchTab('margin')">Margin Calc</div>
   <div class="tab" onclick="switchTab('calendar')">Market Calendar</div>
   <div class="tab" onclick="switchTab('news')">Market News</div>
@@ -277,7 +277,7 @@
       </div>
       <div class="elevator-label" style="margin-left:8px;">Elevator</div>
       <select class="elevator-select" id="elev-select" onchange="onElevChange()">
-        <option value="">Select elevator / purchaser…</option>
+        <option value="">Select local buyer…</option>
       </select>
       <div class="elev-basis" id="elev-basis-display" style="display:none;"></div>
       <div class="elev-detail" id="elev-dist-display"></div>
@@ -341,12 +341,12 @@
     </div>
 
     <!-- Local cash table -->
-    <div class="section-divider">Local Cash Prices — All Elevators</div>
+    <div class="section-divider">Local Cash Prices — All Buyers</div>
     <div class="panel full" style="margin-bottom:18px;padding:0 0 6px;">
       <table class="cash-table">
         <thead>
           <tr>
-            <th>Elevator / Purchaser</th>
+            <th>Local Buyer</th>
             <th>Corn Cash</th>
             <th>Corn Basis</th>
             <th>Soy Cash</th>
@@ -383,11 +383,11 @@
         </div>
         <div class="guide-section">
           <div class="guide-heading">Basis</div>
-          <div class="guide-row"><span class="guide-desc">Cash price minus the nearby futures price. A negative basis (e.g. −0.18) means the elevator pays 18¢ under futures. Tighter (less negative) basis = better local market.</span></div>
+          <div class="guide-row"><span class="guide-desc">Cash price minus the nearby futures price. A negative basis (e.g. −0.18) means the buyer pays 18¢ under futures. Tighter (less negative) basis = better local market.</span></div>
         </div>
         <div class="guide-section">
           <div class="guide-heading">Tabs</div>
-          <div class="guide-row"><span class="guide-label">Elevators</span><span class="guide-desc">Details, hours, and distance to each purchaser</span></div>
+          <div class="guide-row"><span class="guide-label">Local Buyers</span><span class="guide-desc">Details, hours, and distance to each purchaser</span></div>
           <div class="guide-row"><span class="guide-label">Margin Calc</span><span class="guide-desc">Break-even and net profit calculator by crop</span></div>
           <div class="guide-row"><span class="guide-label">Calendar</span><span class="guide-desc">Upcoming USDA reports and CBOT events</span></div>
         </div>
@@ -400,10 +400,10 @@
   <!-- ============================== ELEVATORS ============================== -->
   <div class="section" id="tab-elevators">
     <div class="insight-strip" style="margin-bottom:20px;">
-      Curated elevators plus any additional grain buyers found within ~50 miles of your location via OpenStreetMap. Basis on discovered elevators is estimated — verify with the buyer directly. <span id="discovery-status-dir" style="color:var(--corn);"></span>
+      Curated grain buyers plus any additional grain buyers found within ~50 miles of your location via OpenStreetMap. Basis on discovered elevators is estimated — verify with the buyer directly. <span id="discovery-status-dir" style="color:var(--corn);"></span>
     </div>
     <div id="elev-directory">
-      <div style="text-align:center;padding:40px;color:var(--txt3);font-size:13px;">Locating nearby elevators…</div>
+      <div style="text-align:center;padding:40px;color:var(--txt3);font-size:13px;">Locating nearby grain buyers…</div>
     </div>
   </div>
 
@@ -680,7 +680,7 @@
           <div>
             <div class="brief-headline">CBOT corn futures finish higher on export demand optimism and tightening South American supplies</div>
             <div class="brief-meta">2h ago · CBOT</div>
-            <div class="brief-note"><strong>What it means for you:</strong> Positive export signals support short-term upside. If you have unpriced corn in the bin, watch basis at your elevator — tightening basis plus higher futures = strong selling window.</div>
+            <div class="brief-note"><strong>What it means for you:</strong> Positive export signals support short-term upside. If you have unpriced corn in the bin, watch basis at your local buyer — tightening basis plus higher futures = strong selling window.</div>
           </div>
         </div>
         <div class="brief-item">
@@ -720,7 +720,7 @@
           <div>
             <div class="brief-headline">Southern Minnesota basis steady — CHS and New Vision holding corn basis near -0.22 under May</div>
             <div class="brief-meta">8h ago · DTN</div>
-            <div class="brief-note"><strong>What it means for you:</strong> Basis has been stable at local elevators. Compare the cash-table prices across your nearby buyers — even a 3¢ difference in basis on 10,000 bu is $300 in your pocket.</div>
+            <div class="brief-note"><strong>What it means for you:</strong> Basis has been stable at local elevators. Compare cash prices across nearby buyers — even a 3¢ difference in basis on 10,000 bu is $300 in your pocket.</div>
           </div>
         </div>
       </div>
@@ -738,7 +738,7 @@
             <div class="source-link-icon usda">🌽</div>
             <div class="source-link-body">
               <div class="source-link-title">USDA AMS — Grain &amp; Feed Market News</div>
-              <div class="source-link-desc">Official corn, soybean, feed grain, and hay price reports including local cash prices and country elevator bids across the Midwest</div>
+              <div class="source-link-desc">Official corn, soybean, feed grain, and hay price reports including local cash prices and country buyer bids across the Midwest</div>
             </div>
             <span class="source-link-tag gov">GOV</span>
             <div class="source-link-arrow">↗</div>
@@ -788,7 +788,7 @@
             <div class="source-link-icon cbot">📍</div>
             <div class="source-link-body">
               <div class="source-link-title">DTN/Progressive Farmer — Local Grain Prices</div>
-              <div class="source-link-desc">Searchable local elevator cash bids and basis levels — the best tool for comparing buyer prices in your county</div>
+              <div class="source-link-desc">Searchable local buyer cash bids and basis levels — the best tool for comparing buyer prices in your county</div>
             </div>
             <span class="source-link-tag free">FREE</span>
             <div class="source-link-arrow">↗</div>
@@ -864,12 +864,12 @@ const REGION_A={
   id:'regionA', label:'Area 1', sublabel:'Mountain Lake · Fairmont · Trimont',
   centerLat:43.88, centerLon:-94.76,
   elevators:{
-    newvision: { name:'New Vision Coop',      loc:'Mountain Lake MN',  lat:44.0297, lon:-94.9346, cornBasis:-0.20, soyBasis:-0.28, curated:true, region:'A' },
-    cfs:       { name:'CFS — St. James',      loc:'St. James MN',      lat:43.9822, lon:-94.6271, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'A' },
-    cfscv:     { name:'Crystal Valley (CFS)', loc:'Crystal Valley MN', lat:44.0300, lon:-94.8000, cornBasis:-0.22, soyBasis:-0.27, curated:true, region:'A' },
-    trimont:   { name:'Trimont Feedmill',     loc:'Trimont MN',        lat:43.7622, lon:-94.7110, cornBasis:-0.16, soyBasis:-0.24, curated:true, region:'A' },
-    chs:       { name:'CHS Fairmont',         loc:'Fairmont MN',       lat:43.6522, lon:-94.4614, cornBasis:-0.19, soyBasis:-0.26, curated:true, region:'A' },
-    poet:      { name:'POET Biorefining',     loc:'Bingham Lake MN',   lat:43.8944, lon:-95.0414, cornBasis:-0.14, soyBasis:null,  curated:true, region:'A' },
+    newvision: { name:'New Vision Coop',      loc:'Mountain Lake MN',  lat:44.0297, lon:-94.9346, cornBasis:-0.20, soyBasis:-0.28, curated:true, region:'A', phone:'(507) 427-2419', phoneLabel:'Grain' },
+    cfs:       { name:'CFS — St. James',      loc:'St. James MN',      lat:43.9822, lon:-94.6271, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'A', phone:'(507) 375-3350', phoneLabel:'Grain' },
+    cfscv:     { name:'Crystal Valley (CFS)', loc:'Crystal Valley MN', lat:44.0300, lon:-94.8000, cornBasis:-0.22, soyBasis:-0.27, curated:true, region:'A', phone:'(507) 639-2031', phoneLabel:'Location' },
+    trimont:   { name:'Crystal Valley — Trimont', loc:'Trimont MN',    lat:43.7622, lon:-94.7110, cornBasis:-0.16, soyBasis:-0.24, curated:true, region:'A', phone:'(507) 639-2031', phoneLabel:'Grain' },
+    chs:       { name:'CHS Fairmont',         loc:'Fairmont MN',       lat:43.6522, lon:-94.4614, cornBasis:-0.19, soyBasis:-0.26, curated:true, region:'A', phone:'(800) 652-9727', phoneLabel:'Grain' },
+    poet:      { name:'POET Biorefining',     loc:'Bingham Lake MN',   lat:43.8944, lon:-95.0414, cornBasis:-0.14, soyBasis:null,  curated:true, region:'A', phone:'(507) 831-0067', phoneLabel:'Commodity' },
   }
 };
 
@@ -879,23 +879,23 @@ const REGION_B={
   centerLat:44.29, centerLon:-93.27,
   elevators:{
     cfs_nfield:   { name:'CFS — Northfield Grain',  loc:'Northfield MN',  lat:44.4560, lon:-93.1627, cornBasis:-0.17, soyBasis:-0.24, curated:true, region:'B',
-                    note:'~15 mi north of Faribault · 1600 Hwy 3 S · daily cash bids online', url:'https://www.centralfarmservice.com' },
+                    note:'1600 Hwy 3 S · daily cash bids online · futures contracting', url:'https://www.centralfarmservice.com', phone:'(507) 263-2050', phoneLabel:'Grain' },
     cfs_kenyon:   { name:'CFS — Kenyon Grain',      loc:'Kenyon MN',      lat:44.2716, lon:-93.0011, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'B',
-                    note:'~15 mi east · 806 2nd St · futures contracting available', url:'https://www.centralfarmservice.com' },
+                    note:'806 2nd St · futures contracting available', url:'https://www.centralfarmservice.com', phone:'(507) 263-2050', phoneLabel:'Grain' },
     cfs_owatonna: { name:'CFS — Owatonna Main',     loc:'Owatonna MN',    lat:44.0836, lon:-93.2241, cornBasis:-0.19, soyBasis:-0.26, curated:true, region:'B',
-                    note:'~15 mi south · 712 N Cedar Ave · harvest extended hours', url:'https://www.centralfarmservice.com' },
+                    note:'712 N Cedar Ave · harvest extended hours', url:'https://www.centralfarmservice.com', phone:'(507) 451-1230', phoneLabel:'Main' },
     mnvg_webster: { name:'MN Valley Grain — Webster', loc:'Webster MN',   lat:44.4000, lon:-93.3700, cornBasis:-0.21, soyBasis:-0.28, curated:true, region:'B',
-                    note:'~15 mi NW of Faribault · corn & soybeans · DP contracts', url:null },
+                    note:'Corn & soybeans · DP contracts available', url:null, phone:'(507) 357-6841', phoneLabel:'Office' },
     mnvg_montgomery:{ name:'MN Valley Grain — Montgomery', loc:'Montgomery MN', lat:44.4383, lon:-93.5822, cornBasis:-0.20, soyBasis:-0.27, curated:true, region:'B',
-                    note:'~20 mi west · Delayed Pricing (DP) contracts for both crops', url:null },
+                    note:'Delayed Pricing (DP) contracts for both crops', url:null, phone:'(507) 357-6841', phoneLabel:'Office' },
     mnvg_lecenter:{ name:'MN Valley Grain — Le Center', loc:'Le Center MN', lat:44.3922, lon:-93.7302, cornBasis:-0.21, soyBasis:-0.28, curated:true, region:'B',
-                    note:'~20 mi west · corn & soybeans buy/sell/store', url:null },
+                    note:'Corn & soybeans — buy, sell, store', url:null, phone:'(507) 357-6841', phoneLabel:'Office' },
     farmers_elev: { name:"Farmers Elevator — Hope",  loc:'Hope MN',       lat:44.0500, lon:-93.3400, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'B',
-                    note:'~25 mi south · current cash prices + New Crop Delayed Pricing · open storage', url:'https://www.hopegrain.com' },
+                    note:'Current cash prices + New Crop Delayed Pricing · open storage', url:'https://www.hopegrain.com', phone:'(507) 451-9020', phoneLabel:'Main' },
     agpartners_gd:{ name:'Ag Partners — Goodhue',   loc:'Goodhue MN',    lat:44.3972, lon:-92.6261, cornBasis:-0.16, soyBasis:-0.23, curated:true, region:'B',
-                    note:'~30 mi east · market-specific cash bids · grain service charge schedules', url:null },
+                    note:'Market-specific cash bids · grain service charge schedules', url:'https://agpartners.net', phone:'(651) 923-4496', phoneLabel:'Main' },
     agpartners_bc:{ name:'Ag Partners — Bellechester', loc:'Bellechester MN', lat:44.3750, lon:-92.4836, cornBasis:-0.17, soyBasis:-0.24, curated:true, region:'B',
-                    note:'~35 mi east · drying & storage schedules online', url:null },
+                    note:'Drying & storage schedules online', url:'https://agpartners.net', phone:'(651) 923-4453', phoneLabel:'Grain' },
   }
 };
 
@@ -1028,12 +1028,12 @@ async function discoverElevators(lat,lon){
     });
     if(statusEl){
       statusEl.textContent=added>0
-        ? added+' additional elevator'+(added>1?'s':'')+' found nearby'
-        : 'No additional elevators found in range';
+        ? added+' additional buyer'+(added>1?'s':'')+' found nearby'
+        : 'No additional buyers found in range';
       setTimeout(()=>{ if(statusEl) statusEl.textContent=''; },4000);
     }
   }catch(e){
-    if(statusEl) statusEl.textContent='Elevator search unavailable';
+    if(statusEl) statusEl.textContent='Buyer search unavailable';
     setTimeout(()=>{ if(statusEl) statusEl.textContent=''; },3000);
   }
   // Rebuild UI with any new results
@@ -1089,7 +1089,7 @@ function rebuildElevatorSelect(){
   const sel=document.getElementById('elev-select');
   const currentVal=sel.value;
   const sorted=sortedElevatorKeys();
-  sel.innerHTML='<option value="">Select elevator / purchaser…</option>';
+  sel.innerHTML='<option value="">Select local buyer…</option>';
   // Group by region for visual clarity
   const groups={A:[],B:[],discovered:[]};
   sorted.forEach(key=>{
@@ -1272,6 +1272,11 @@ function rebuildElevatorDirectory(){
       : e.region==='B'
       ? `<span class="region-badge-b">Area 2</span>`
       : '';
+    const phoneHtml=e.phone
+      ? `<a href="tel:${e.phone}" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);text-decoration:none;margin-top:8px;" onmouseover="this.style.color='var(--txt1)'" onmouseout="this.style.color='var(--txt2)'">
+           <span style="font-size:10px;letter-spacing:1px;color:var(--txt3);">${e.phoneLabel||'PHONE'}</span> ${e.phone}
+         </a>`
+      : '';
     const discoveredNote=e.discovered
       ? `<div style="font-size:11px;color:var(--txt3);margin-top:6px;font-style:italic;">Found via OpenStreetMap · basis estimated</div>`:'';
     const noteHtml=e.note
@@ -1302,7 +1307,8 @@ function rebuildElevatorDirectory(){
       ${basisBlock}
       ${noteHtml}
       ${discoveredNote}
-      <div style="display:flex;gap:8px;margin-top:10px;">
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+        ${phoneHtml}
         <a class="elev-link" href="${mapsUrl}" target="_blank" rel="noopener">Maps ↗</a>
         ${urlLink}
       </div>
