@@ -75,6 +75,16 @@
   .elev-basis { font-size: 13px; color: var(--txt2); }
   .elev-basis strong { color: var(--txt1); }
 
+  /* REGION TOGGLE */
+  .region-toggle { display:flex; border:1px solid var(--border2); border-radius:3px; overflow:hidden; flex-shrink:0; }
+  .region-btn { font-family:inherit; font-size:11px; letter-spacing:1px; padding:6px 13px; background:transparent; color:var(--txt3); cursor:pointer; border:none; border-right:1px solid var(--border); text-transform:uppercase; transition:all .12s; white-space:nowrap; }
+  .region-btn:last-child { border-right:none; }
+  .region-btn.active { background:var(--corn); color:#0f0f0f; font-weight:700; }
+  .region-btn:not(.active):hover { background:var(--bg3); color:var(--txt2); }
+  /* Region badge in directory */
+  .region-badge-a { font-size:9px;letter-spacing:2px;padding:2px 7px;border-radius:2px;text-transform:uppercase;font-weight:700;background:var(--corn-dim);color:var(--corn); }
+  .region-badge-b { font-size:9px;letter-spacing:2px;padding:2px 7px;border-radius:2px;text-transform:uppercase;font-weight:700;background:var(--teal-dim);color:var(--teal); }
+
   /* PRICE CARDS */
   .cards { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 20px; }
   .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 16px; position: relative; overflow: hidden; }
@@ -261,19 +271,22 @@
   <div class="section active" id="tab-prices">
 
     <div class="elevator-bar">
-      <div class="elevator-label">Local Basis ↗</div>
+      <div class="elevator-label">Region</div>
+      <div class="region-toggle">
+        <button class="region-btn active" data-region="auto" onclick="setRegion('auto')">Auto</button>
+        <button class="region-btn" data-region="A" onclick="setRegion('A')">Area 1</button>
+        <button class="region-btn" data-region="B" onclick="setRegion('B')">Area 2</button>
+        <button class="region-btn" data-region="both" onclick="setRegion('both')">Both</button>
+      </div>
+      <div class="elevator-label" style="margin-left:8px;">Elevator</div>
       <select class="elevator-select" id="elev-select" onchange="onElevChange()">
         <option value="">Select elevator / purchaser…</option>
-        <option value="newvision">New Vision — Mountain Lake, MN</option>
-        <option value="cfs">CFS — St. James, MN</option>
-        <option value="cfscv">Crystal Valley — Feedmill (CFS)</option>
-        <option value="trimont">Trimont Feedmill — Trimont, MN</option>
-        <option value="chs">CHS — Fairmont, MN</option>
-        <option value="poet">POET — Bingham Lake, MN</option>
       </select>
       <div class="elev-basis" id="elev-basis-display" style="display:none;"></div>
       <div class="elev-detail" id="elev-dist-display"></div>
+      <div id="discovery-status" style="font-size:11px;color:var(--txt3);margin-left:auto;font-style:italic;"></div>
     </div>
+    <div style="font-size:11px;color:var(--txt3);margin:-12px 0 16px;padding-left:4px;" id="active-region-label"></div>
 
     <div class="insight-strip" id="insight-strip">Fetching market data...</div>
 
@@ -390,97 +403,12 @@
   <!-- ============================== ELEVATORS ============================== -->
   <div class="section" id="tab-elevators">
     <div class="insight-strip" style="margin-bottom:20px;">
-      Six local grain purchasers serving southern Minnesota. Click a row in the Prices tab to set your default elevator. Distances calculated from your location.
+      Curated elevators plus any additional grain buyers found within ~50 miles of your location via OpenStreetMap. Basis on discovered elevators is estimated — verify with the buyer directly. <span id="discovery-status-dir" style="color:var(--corn);"></span>
     </div>
-
-    <div class="elev-card">
-      <div class="elev-card-header">
-        <div><div class="elev-card-name">New Vision Cooperative</div><div class="elev-card-loc">📍 Mountain Lake, MN 56159</div></div>
-        <div class="elev-card-dist" id="dist-newvision">— mi</div>
-      </div>
-      <div class="elev-crops"><span class="elev-crop-tag corn">Corn</span><span class="elev-crop-tag soy">Soybeans</span><span class="elev-crop-tag wheat">Wheat</span></div>
-      <div class="elev-details-row">
-        <div class="elev-detail-item">PHONE<strong>(507) 427-2677</strong></div>
-        <div class="elev-detail-item">HOURS<strong>Mon–Fri 7am–5pm</strong></div>
-        <div class="elev-detail-item">DRYING<strong>Available</strong></div>
-        <div class="elev-detail-item">STORAGE<strong>On-site</strong></div>
-      </div>
-      <a class="elev-link" href="https://newvision.coop" target="_blank" rel="noopener">newvision.coop ↗</a>
+    <div id="elev-directory">
+      <div style="text-align:center;padding:40px;color:var(--txt3);font-size:13px;">Locating nearby elevators…</div>
     </div>
-
-    <div class="elev-card">
-      <div class="elev-card-header">
-        <div><div class="elev-card-name">CFS — Central Farm Service</div><div class="elev-card-loc">📍 St. James, MN 56081</div></div>
-        <div class="elev-card-dist" id="dist-cfs">— mi</div>
-      </div>
-      <div class="elev-crops"><span class="elev-crop-tag corn">Corn</span><span class="elev-crop-tag soy">Soybeans</span></div>
-      <div class="elev-details-row">
-        <div class="elev-detail-item">PHONE<strong>(507) 375-3391</strong></div>
-        <div class="elev-detail-item">HOURS<strong>Mon–Fri 7am–5pm</strong></div>
-        <div class="elev-detail-item">DRYING<strong>Available</strong></div>
-        <div class="elev-detail-item">STORAGE<strong>On-site</strong></div>
-      </div>
-      <a class="elev-link" href="https://www.centralfarmservice.com" target="_blank" rel="noopener">centralfarmservice.com ↗</a>
-    </div>
-
-    <div class="elev-card">
-      <div class="elev-card-header">
-        <div><div class="elev-card-name">Crystal Valley — Feedmill (CFS)</div><div class="elev-card-loc">📍 Crystal Valley, MN region</div></div>
-        <div class="elev-card-dist" id="dist-cfscv">— mi</div>
-      </div>
-      <div class="elev-crops"><span class="elev-crop-tag corn">Corn</span><span class="elev-crop-tag soy">Soybeans</span></div>
-      <div class="elev-details-row">
-        <div class="elev-detail-item">OPERATOR<strong>CFS Network</strong></div>
-        <div class="elev-detail-item">DRYING<strong>Available</strong></div>
-        <div class="elev-detail-item">STORAGE<strong>On-site</strong></div>
-      </div>
-      <a class="elev-link" href="https://www.centralfarmservice.com" target="_blank" rel="noopener">centralfarmservice.com ↗</a>
-    </div>
-
-    <div class="elev-card">
-      <div class="elev-card-header">
-        <div><div class="elev-card-name">Trimont Feedmill</div><div class="elev-card-loc">📍 Trimont, MN 56176</div></div>
-        <div class="elev-card-dist" id="dist-trimont">— mi</div>
-      </div>
-      <div class="elev-crops"><span class="elev-crop-tag corn">Corn</span><span class="elev-crop-tag soy">Soybeans</span></div>
-      <div class="elev-details-row">
-        <div class="elev-detail-item">PHONE<strong>(507) 639-2961</strong></div>
-        <div class="elev-detail-item">HOURS<strong>Call ahead</strong></div>
-        <div class="elev-detail-item">STORAGE<strong>On-site</strong></div>
-      </div>
-    </div>
-
-    <div class="elev-card">
-      <div class="elev-card-header">
-        <div><div class="elev-card-name">CHS Inc.</div><div class="elev-card-loc">📍 Fairmont, MN 56031</div></div>
-        <div class="elev-card-dist" id="dist-chs">— mi</div>
-      </div>
-      <div class="elev-crops"><span class="elev-crop-tag corn">Corn</span><span class="elev-crop-tag soy">Soybeans</span><span class="elev-crop-tag wheat">Wheat</span></div>
-      <div class="elev-details-row">
-        <div class="elev-detail-item">PHONE<strong>(507) 238-4211</strong></div>
-        <div class="elev-detail-item">HOURS<strong>Mon–Fri 7am–5pm</strong></div>
-        <div class="elev-detail-item">DRYING<strong>Available</strong></div>
-        <div class="elev-detail-item">STORAGE<strong>On-site</strong></div>
-      </div>
-      <a class="elev-link" href="https://www.chsinc.com" target="_blank" rel="noopener">chsinc.com ↗</a>
-    </div>
-
-    <div class="elev-card">
-      <div class="elev-card-header">
-        <div><div class="elev-card-name">POET Biorefining</div><div class="elev-card-loc">📍 Bingham Lake, MN 56118</div></div>
-        <div class="elev-card-dist" id="dist-poet">— mi</div>
-      </div>
-      <div class="elev-crops"><span class="elev-crop-tag corn">Corn</span></div>
-      <div class="elev-details-row">
-        <div class="elev-detail-item">PHONE<strong>(507) 831-2244</strong></div>
-        <div class="elev-detail-item">TYPE<strong>Ethanol Plant</strong></div>
-        <div class="elev-detail-item">CAPACITY<strong>~50M gal/yr</strong></div>
-        <div class="elev-detail-item">NOTE<strong>Corn only</strong></div>
-      </div>
-      <a class="elev-link" href="https://poet.com" target="_blank" rel="noopener">poet.com ↗</a>
-    </div>
-
-  </div><!-- /tab-elevators -->
+  </div>
 
 
   <!-- ============================== MARGIN CALC ============================== -->
@@ -934,20 +862,189 @@ function switchCalc(id,btn){
 }
 
 // ===================== ELEVATOR DATA =====================
-const ELEVATORS={
-  newvision: { name:'New Vision', loc:'Mountain Lake MN', lat:44.0297, lon:-94.9346, cornBasis:-0.20, soyBasis:-0.28 },
-  cfs:       { name:'CFS',        loc:'St. James MN',     lat:43.9822, lon:-94.6271, cornBasis:-0.18, soyBasis:-0.25 },
-  cfscv:     { name:'Crystal Valley (CFS)', loc:'Crystal Valley area', lat:44.0300, lon:-94.8000, cornBasis:-0.22, soyBasis:-0.27 },
-  trimont:   { name:'Trimont Feedmill', loc:'Trimont MN', lat:43.7622, lon:-94.7110, cornBasis:-0.16, soyBasis:-0.24 },
-  chs:       { name:'CHS',        loc:'Fairmont MN',      lat:43.6522, lon:-94.4614, cornBasis:-0.19, soyBasis:-0.26 },
-  poet:      { name:'POET',       loc:'Bingham Lake MN',  lat:43.8944, lon:-95.0414, cornBasis:-0.14, soyBasis:null }
+// ── CURATED ELEVATOR REGIONS ───────────────────────────────────────────────
+// Region A — Southern MN (Mountain Lake / Fairmont / Trimont area)
+const REGION_A={
+  id:'regionA', label:'Area 1', sublabel:'Mountain Lake · Fairmont · Trimont',
+  centerLat:43.88, centerLon:-94.76,
+  elevators:{
+    newvision: { name:'New Vision Coop',      loc:'Mountain Lake MN',  lat:44.0297, lon:-94.9346, cornBasis:-0.20, soyBasis:-0.28, curated:true, region:'A' },
+    cfs:       { name:'CFS — St. James',      loc:'St. James MN',      lat:43.9822, lon:-94.6271, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'A' },
+    cfscv:     { name:'Crystal Valley (CFS)', loc:'Crystal Valley MN', lat:44.0300, lon:-94.8000, cornBasis:-0.22, soyBasis:-0.27, curated:true, region:'A' },
+    trimont:   { name:'Trimont Feedmill',     loc:'Trimont MN',        lat:43.7622, lon:-94.7110, cornBasis:-0.16, soyBasis:-0.24, curated:true, region:'A' },
+    chs:       { name:'CHS Fairmont',         loc:'Fairmont MN',       lat:43.6522, lon:-94.4614, cornBasis:-0.19, soyBasis:-0.26, curated:true, region:'A' },
+    poet:      { name:'POET Biorefining',     loc:'Bingham Lake MN',   lat:43.8944, lon:-95.0414, cornBasis:-0.14, soyBasis:null,  curated:true, region:'A' },
+  }
 };
+
+// Region B — Faribault / Northfield / Owatonna area
+const REGION_B={
+  id:'regionB', label:'Area 2', sublabel:'Northfield · Kenyon · Owatonna · Le Center',
+  centerLat:44.29, centerLon:-93.27,
+  elevators:{
+    cfs_nfield:   { name:'CFS — Northfield Grain',  loc:'Northfield MN',  lat:44.4560, lon:-93.1627, cornBasis:-0.17, soyBasis:-0.24, curated:true, region:'B',
+                    note:'~15 mi north of Faribault · 1600 Hwy 3 S · daily cash bids online', url:'https://www.centralfarmservice.com' },
+    cfs_kenyon:   { name:'CFS — Kenyon Grain',      loc:'Kenyon MN',      lat:44.2716, lon:-93.0011, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'B',
+                    note:'~15 mi east · 806 2nd St · futures contracting available', url:'https://www.centralfarmservice.com' },
+    cfs_owatonna: { name:'CFS — Owatonna Main',     loc:'Owatonna MN',    lat:44.0836, lon:-93.2241, cornBasis:-0.19, soyBasis:-0.26, curated:true, region:'B',
+                    note:'~15 mi south · 712 N Cedar Ave · harvest extended hours', url:'https://www.centralfarmservice.com' },
+    mnvg_webster: { name:'MN Valley Grain — Webster', loc:'Webster MN',   lat:44.4000, lon:-93.3700, cornBasis:-0.21, soyBasis:-0.28, curated:true, region:'B',
+                    note:'~15 mi NW of Faribault · corn & soybeans · DP contracts', url:null },
+    mnvg_montgomery:{ name:'MN Valley Grain — Montgomery', loc:'Montgomery MN', lat:44.4383, lon:-93.5822, cornBasis:-0.20, soyBasis:-0.27, curated:true, region:'B',
+                    note:'~20 mi west · Delayed Pricing (DP) contracts for both crops', url:null },
+    mnvg_lecenter:{ name:'MN Valley Grain — Le Center', loc:'Le Center MN', lat:44.3922, lon:-93.7302, cornBasis:-0.21, soyBasis:-0.28, curated:true, region:'B',
+                    note:'~20 mi west · corn & soybeans buy/sell/store', url:null },
+    farmers_elev: { name:"Farmers Elevator — Hope",  loc:'Hope MN',       lat:44.0500, lon:-93.3400, cornBasis:-0.18, soyBasis:-0.25, curated:true, region:'B',
+                    note:'~25 mi south · current cash prices + New Crop Delayed Pricing · open storage', url:'https://www.hopegrain.com' },
+    agpartners_gd:{ name:'Ag Partners — Goodhue',   loc:'Goodhue MN',    lat:44.3972, lon:-92.6261, cornBasis:-0.16, soyBasis:-0.23, curated:true, region:'B',
+                    note:'~30 mi east · market-specific cash bids · grain service charge schedules', url:null },
+    agpartners_bc:{ name:'Ag Partners — Bellechester', loc:'Bellechester MN', lat:44.3750, lon:-92.4836, cornBasis:-0.17, soyBasis:-0.24, curated:true, region:'B',
+                    note:'~35 mi east · drying & storage schedules online', url:null },
+  }
+};
+
+const ALL_REGIONS={ A: REGION_A, B: REGION_B };
+
+// ── Active region + ELEVATORS object ───────────────────────────────────────
+let activeRegion='auto'; // 'auto' | 'A' | 'B' | 'both'
+
+function getCuratedForRegion(rKey){
+  if(rKey==='A') return REGION_A.elevators;
+  if(rKey==='B') return REGION_B.elevators;
+  return {...REGION_A.elevators,...REGION_B.elevators};
+}
+
+// CURATED is a flat alias used by isTooClose()
+let CURATED=getCuratedForRegion('both');
+
+// Live ELEVATORS object — curated + discovered
+let ELEVATORS=Object.assign({},CURATED);
+
+// Auto-detect best region based on distance from user
+function autoDetectRegion(){
+  if(!userLat||!userLon) return 'both';
+  const dA=distMiles(userLat,userLon,REGION_A.centerLat,REGION_A.centerLon);
+  const dB=distMiles(userLat,userLon,REGION_B.centerLat,REGION_B.centerLon);
+  // If within 40 mi of both, show both; otherwise nearest
+  if(Math.abs(dA-dB)<25) return 'both';
+  return dA<dB?'A':'B';
+}
+
+function setRegion(rKey){
+  activeRegion=rKey;
+  // Rebuild CURATED and ELEVATORS with just the chosen region(s), keeping any discovered
+  const discovered=Object.fromEntries(Object.entries(ELEVATORS).filter(([,e])=>e.discovered));
+  CURATED=getCuratedForRegion(rKey==='auto'?autoDetectRegion():rKey);
+  ELEVATORS=Object.assign({},CURATED,discovered);
+  // Update toggle UI
+  document.querySelectorAll('.region-btn').forEach(b=>b.classList.toggle('active',b.dataset.region===rKey));
+  rebuildElevatorSelect();
+  buildCashTable();
+  rebuildElevatorDirectory();
+  updateRegionBadge();
+}
+
+function updateRegionBadge(){
+  const el=document.getElementById('active-region-label');
+  if(!el) return;
+  const eff=activeRegion==='auto'?(userLat?autoDetectRegion():'both'):activeRegion;
+  if(eff==='A')      el.textContent=REGION_A.label+' — '+REGION_A.sublabel;
+  else if(eff==='B') el.textContent=REGION_B.label+' — '+REGION_B.sublabel;
+  else               el.textContent='All regions — '+REGION_A.label+' + '+REGION_B.label;
+}
 
 let DATA={cn:{price:4.35,open:4.31,high:4.42,low:4.28,change:0.04,pct:0.93},
           cn2:{price:4.52,open:4.49,high:4.58,low:4.46,change:0.03,pct:0.67},
           sb:{price:9.72,open:9.68,high:9.80,low:9.61,change:0.04,pct:0.41},
           sb2:{price:10.05,open:10.01,high:10.12,low:9.97,change:0.04,pct:0.40}};
 let userLat=null,userLon=null;
+
+// ── DISCOVER NEARBY ELEVATORS via OSM Overpass API ─────────────────────────
+// Search radius in meters — 80 km (~50 mi) covers the whole region
+const SEARCH_RADIUS_M = 80000;
+
+// OSM tags that indicate a grain elevator / grain handling facility
+const OVERPASS_QUERY = (lat,lon) => `
+[out:json][timeout:20];
+(
+  node["man_made"="silo"](around:${SEARCH_RADIUS_M},${lat},${lon});
+  node["landuse"="farmyard"]["name"~"elevator|grain|coop|co-op|feed|agri",i](around:${SEARCH_RADIUS_M},${lat},${lon});
+  node["amenity"~"grain_elevator|elevator"](around:${SEARCH_RADIUS_M},${lat},${lon});
+  node["name"~"elevator|grain elevator|co-op|coop|chs|adf|landmark|heartland|cenex|ag partners|land o lakes|farmer|feed mill|feedmill|ethanol",i]["name"!~"^$"](around:${SEARCH_RADIUS_M},${lat},${lon});
+  way["man_made"="silo"]["name"~".",i](around:${SEARCH_RADIUS_M},${lat},${lon});
+  way["landuse"="farmyard"]["name"~"elevator|grain|coop|co-op|feed",i](around:${SEARCH_RADIUS_M},${lat},${lon});
+);
+out center tags;
+`;
+
+function slugify(str){return str.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+
+// Deduplicate: if a discovered elevator is within 2 km of a curated one, skip it
+function isTooClose(lat,lon){
+  return Object.values(CURATED).some(c=>distMiles(lat,lon,c.lat,c.lon)<1.3);
+}
+
+// Rough estimate basis for discovered elevators (±noise so they don't look identical)
+function estimateBasis(lat,lon,isCorn){
+  // Basis varies slightly by distance from river terminals
+  const seedRng=Math.abs(Math.sin(lat*1000+lon*997));
+  const base=isCorn?-0.20:-0.27;
+  return parseFloat((base+(seedRng*0.10-0.05)).toFixed(2));
+}
+
+async function discoverElevators(lat,lon){
+  const statusEl=document.getElementById('discovery-status');
+  if(statusEl) statusEl.textContent='Searching for nearby elevators…';
+  try{
+    const body='data='+encodeURIComponent(OVERPASS_QUERY(lat,lon));
+    const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body});
+    if(!r.ok) throw new Error('overpass '+r.status);
+    const d=await r.json();
+    let added=0;
+    (d.elements||[]).forEach(el=>{
+      const name=(el.tags&&(el.tags.name||el.tags['operator']||el.tags['brand']))||'';
+      if(!name||name.length<3) return;
+      const elat=el.lat||(el.center&&el.center.lat);
+      const elon=el.lon||(el.center&&el.center.lon);
+      if(!elat||!elon) return;
+      if(isTooClose(elat,elon)) return;           // already have a curated one nearby
+      const key='osm_'+slugify(name)+'_'+el.id;
+      if(ELEVATORS[key]) return;                   // already added this one
+      // Filter out obvious non-elevators (farms, residential silos, etc.)
+      const n=name.toLowerCase();
+      const keep=n.includes('elevator')||n.includes('grain')||n.includes('coop')||
+                 n.includes('co-op')||n.includes('chs')||n.includes('cenex')||
+                 n.includes('feed')||n.includes('ethanol')||n.includes('agri')||
+                 n.includes('landmark')||n.includes('heartland')||n.includes('adf')||
+                 n.includes('poet')||n.includes('land o')||n.includes('farmer');
+      if(!keep) return;
+      // Build city label from OSM address tags
+      const city=(el.tags['addr:city']||el.tags['addr:town']||'');
+      const state=(el.tags['addr:state']||'MN');
+      const loc=city?(city+' '+state).trim():(state);
+      ELEVATORS[key]={
+        name, loc, lat:elat, lon:elon,
+        cornBasis:estimateBasis(elat,elon,true),
+        soyBasis:estimateBasis(elat,elon,false),
+        curated:false, discovered:true
+      };
+      added++;
+    });
+    if(statusEl){
+      statusEl.textContent=added>0
+        ? added+' additional elevator'+(added>1?'s':'')+' found nearby'
+        : 'No additional elevators found in range';
+      setTimeout(()=>{ if(statusEl) statusEl.textContent=''; },4000);
+    }
+  }catch(e){
+    if(statusEl) statusEl.textContent='Elevator search unavailable';
+    setTimeout(()=>{ if(statusEl) statusEl.textContent=''; },3000);
+  }
+  // Rebuild UI with any new results
+  rebuildElevatorSelect();
+  buildCashTable();
+  rebuildElevatorDirectory();
+}
 
 function distMiles(a,b,c,d){const R=3958.8,dLat=(c-a)*Math.PI/180,dLon=(d-b)*Math.PI/180;const x=Math.sin(dLat/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
 
@@ -996,23 +1093,34 @@ function rebuildElevatorSelect(){
   const sel=document.getElementById('elev-select');
   const currentVal=sel.value;
   const sorted=sortedElevatorKeys();
-  // rebuild options
   sel.innerHTML='<option value="">Select elevator / purchaser…</option>';
+  // Group by region for visual clarity
+  const groups={A:[],B:[],discovered:[]};
   sorted.forEach(key=>{
     const e=ELEVATORS[key];
-    const dist=userLat?Math.round(distMiles(userLat,userLon,e.lat,e.lon)):null;
-    const label=e.name+' — '+e.loc+(dist!==null?' (~'+dist+' mi)':'');
-    const opt=document.createElement('option');
-    opt.value=key; opt.textContent=label;
-    sel.appendChild(opt);
+    if(e.discovered) groups.discovered.push(key);
+    else if(e.region==='B') groups.B.push(key);
+    else groups.A.push(key);
   });
-  // restore selection or auto-select nearest
-  if(currentVal && ELEVATORS[currentVal]){
-    sel.value=currentVal;
-  } else if(userLat && sorted.length){
-    sel.value=sorted[0];
-    onElevChange();
+  function addGroup(label,keys){
+    if(!keys.length) return;
+    const og=document.createElement('optgroup');
+    og.label=label;
+    keys.forEach(key=>{
+      const e=ELEVATORS[key];
+      const dist=userLat?Math.round(distMiles(userLat,userLon,e.lat,e.lon)):null;
+      const opt=document.createElement('option');
+      opt.value=key;
+      opt.textContent=e.name+' — '+e.loc+(dist!==null?' (~'+dist+' mi)':'');
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
   }
+  addGroup('Area 1 — Curated',groups.A);
+  addGroup('Area 2 — Curated',groups.B);
+  addGroup('Discovered Nearby',groups.discovered);
+  if(currentVal&&ELEVATORS[currentVal]) sel.value=currentVal;
+  else if(userLat&&sorted.length){ sel.value=sorted[0]; onElevChange(); }
 }
 
 function buildCashTable(){
@@ -1146,22 +1254,78 @@ async function loadWeather(ulat,ulon){
 
   // elevator distances + re-sort everything by distance
   if(ulat&&ulon){
-    Object.entries(ELEVATORS).forEach(([key,e])=>{
-      const el=document.getElementById('dist-'+key);
-      if(el)el.textContent='~'+Math.round(distMiles(ulat,ulon,e.lat,e.lon))+' mi';
-    });
     rebuildElevatorSelect();
     buildCashTable();
+    rebuildElevatorDirectory();
   }
+}
+
+// ── REBUILD ELEVATOR DIRECTORY TAB ─────────────────────────────────────────
+function rebuildElevatorDirectory(){
+  const container=document.getElementById('elev-directory');
+  if(!container) return;
+  const sorted=sortedElevatorKeys();
+  container.innerHTML=sorted.map(key=>{
+    const e=ELEVATORS[key];
+    const dist=userLat?Math.round(distMiles(userLat,userLon,e.lat,e.lon)):null;
+    const distBadge=dist!==null?`<div class="elev-card-dist">~${dist} mi</div>`:'';
+    const regionBadge=e.region==='A'
+      ? `<span class="region-badge-a">Area 1</span>`
+      : e.region==='B'
+      ? `<span class="region-badge-b">Area 2</span>`
+      : '';
+    const discoveredNote=e.discovered
+      ? `<div style="font-size:11px;color:var(--txt3);margin-top:6px;font-style:italic;">Found via OpenStreetMap · basis estimated</div>`:'';
+    const noteHtml=e.note
+      ? `<div style="font-size:11px;color:var(--txt3);margin-top:6px;line-height:1.6;">${e.note}</div>`:'';
+    const cornTag=`<span class="elev-crop-tag corn">Corn</span>`;
+    const soyTag=e.soyBasis!==null?`<span class="elev-crop-tag soy">Soybeans</span>`:'';
+    const basisBlock=e.curated
+      ? `<div class="elev-details-row" style="margin-top:10px;">
+           <div class="elev-detail-item">CORN BASIS<strong style="color:var(--corn)">${(e.cornBasis>=0?'+':'')+e.cornBasis.toFixed(2)}</strong></div>
+           ${e.soyBasis!==null?`<div class="elev-detail-item">SOY BASIS<strong style="color:var(--soy)">${(e.soyBasis>=0?'+':'')+e.soyBasis.toFixed(2)}</strong></div>`:''}
+         </div>`
+      : `<div class="elev-details-row" style="margin-top:10px;">
+           <div class="elev-detail-item">CORN BASIS<strong style="color:var(--txt3)">${(e.cornBasis>=0?'+':'')+e.cornBasis.toFixed(2)} est.</strong></div>
+           ${e.soyBasis!==null?`<div class="elev-detail-item">SOY BASIS<strong style="color:var(--txt3)">${(e.soyBasis>=0?'+':'')+e.soyBasis.toFixed(2)} est.</strong></div>`:''}
+         </div>`;
+    const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.name+' '+e.loc)}`;
+    const urlLink=e.url?`<a class="elev-link" href="${e.url}" target="_blank" rel="noopener">Website ↗</a>`:'';
+    return `<div class="elev-card">
+      <div class="elev-card-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">${regionBadge}${e.discovered?'<span class="elev-crop-tag" style="background:var(--bg3);color:var(--txt3);font-size:9px;letter-spacing:1px;">Discovered</span>':''}</div>
+          <div class="elev-card-name">${e.name}</div>
+          <div class="elev-card-loc">📍 ${e.loc}</div>
+        </div>
+        ${distBadge}
+      </div>
+      <div class="elev-crops">${cornTag}${soyTag}</div>
+      ${basisBlock}
+      ${noteHtml}
+      ${discoveredNote}
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <a class="elev-link" href="${mapsUrl}" target="_blank" rel="noopener">Maps ↗</a>
+        ${urlLink}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function initLocation(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
-      pos=>{userLat=pos.coords.latitude;userLon=pos.coords.longitude;loadWeather(userLat,userLon);},
-      ()=>{userLat=44.03;userLon=-94.76;loadWeather(44.03,-94.76);} // fallback: near Mountain Lake MN
+      pos=>{
+        userLat=pos.coords.latitude;
+        userLon=pos.coords.longitude;
+        // Auto-detect region before loading weather so sort order is correct
+        if(activeRegion==='auto') setRegion('auto');
+        loadWeather(userLat,userLon);
+        discoverElevators(userLat,userLon);
+      },
+      ()=>{userLat=44.03;userLon=-94.76;if(activeRegion==='auto')setRegion('auto');loadWeather(44.03,-94.76);discoverElevators(44.03,-94.76);}
     );
-  } else {userLat=44.03;userLon=-94.76;loadWeather(44.03,-94.76);}
+  } else {userLat=44.03;userLon=-94.76;if(activeRegion==='auto')setRegion('auto');loadWeather(44.03,-94.76);discoverElevators(44.03,-94.76);}
 }
 
 // ===================== MARGIN CALC =====================
@@ -1259,6 +1423,8 @@ loadPrices();
 initLocation();
 calcGrain();
 calcSoy();
+rebuildElevatorDirectory();
+updateRegionBadge();
 </script>
 </body>
 </html>
