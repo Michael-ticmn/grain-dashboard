@@ -337,12 +337,11 @@
         <thead>
           <tr>
             <th>Elevator / Purchaser</th>
-            <th>Location</th>
             <th>Corn Cash</th>
             <th>Corn Basis</th>
             <th>Soy Cash</th>
             <th>Soy Basis</th>
-            <th>Mi. Away</th>
+            <th>Distance</th>
           </tr>
         </thead>
         <tbody id="cash-table-body">
@@ -960,12 +959,12 @@ function onElevChange(){
   const e=ELEVATORS[key];
   let html='<strong>'+e.name+'</strong> — Corn basis: ';
   const cb=e.cornBasis;
-  html+='<span style="color:'+(cb>=0?'#90c840':'#dc6040')+'">'+(cb>=0?'+':'')+cb.toFixed(2)+'</span>';
+  html+='<span style="color:'+(cb>=0?'var(--up)':'var(--down)')+'">'+(cb>=0?'+':'')+cb.toFixed(2)+'</span>';
   if(e.soyBasis!==null){
     const sb=e.soyBasis;
-    html+='  &nbsp;·&nbsp;  Soy basis: <span style="color:'+(sb>=0?'#90c840':'#dc6040')+'">'+(sb>=0?'+':'')+sb.toFixed(2)+'</span>';
+    html+='  &nbsp;·&nbsp;  Soy basis: <span style="color:'+(sb>=0?'var(--up)':'var(--down)')+'">'+(sb>=0?'+':'')+sb.toFixed(2)+'</span>';
   } else {
-    html+='  &nbsp;·&nbsp;  <span style="color:#5a6840">Soy: N/A</span>';
+    html+='  &nbsp;·&nbsp;  <span style="color:var(--txt3)">Soy: N/A</span>';
   }
   disp.innerHTML=html;
   disp.style.display='';
@@ -983,29 +982,71 @@ function highlightTableRow(key){
 }
 
 // ===================== BUILD CASH TABLE =====================
+function sortedElevatorKeys(){
+  const keys=Object.keys(ELEVATORS);
+  if(!userLat) return keys;
+  return keys.slice().sort((a,b)=>{
+    const da=distMiles(userLat,userLon,ELEVATORS[a].lat,ELEVATORS[a].lon);
+    const db=distMiles(userLat,userLon,ELEVATORS[b].lat,ELEVATORS[b].lon);
+    return da-db;
+  });
+}
+
+function rebuildElevatorSelect(){
+  const sel=document.getElementById('elev-select');
+  const currentVal=sel.value;
+  const sorted=sortedElevatorKeys();
+  // rebuild options
+  sel.innerHTML='<option value="">Select elevator / purchaser…</option>';
+  sorted.forEach(key=>{
+    const e=ELEVATORS[key];
+    const dist=userLat?Math.round(distMiles(userLat,userLon,e.lat,e.lon)):null;
+    const label=e.name+' — '+e.loc+(dist!==null?' (~'+dist+' mi)':'');
+    const opt=document.createElement('option');
+    opt.value=key; opt.textContent=label;
+    sel.appendChild(opt);
+  });
+  // restore selection or auto-select nearest
+  if(currentVal && ELEVATORS[currentVal]){
+    sel.value=currentVal;
+  } else if(userLat && sorted.length){
+    sel.value=sorted[0];
+    onElevChange();
+  }
+}
+
 function buildCashTable(){
   const tbody=document.getElementById('cash-table-body');
-  const rows=Object.entries(ELEVATORS).map(([key,e])=>{
+  const sorted=sortedElevatorKeys();
+  const rows=sorted.map((key,idx)=>{
+    const e=ELEVATORS[key];
     const cornFut=DATA.cn.price;
     const soyFut=DATA.sb.price;
     const cornCash=(cornFut+e.cornBasis).toFixed(2);
     const soyCash=e.soyBasis!==null?(soyFut+e.soyBasis).toFixed(2):'—';
     const cbClass=e.cornBasis>=0?'basis-pos':'basis-neg';
     const sbClass=e.soyBasis===null?'':(e.soyBasis>=0?'basis-pos':'basis-neg');
-    const dist=userLat?Math.round(distMiles(userLat,userLon,e.lat,e.lon))+' mi':'—';
+    const dist=userLat?Math.round(distMiles(userLat,userLon,e.lat,e.lon)):null;
+    const distBadge=dist!==null
+      ? (idx===0
+          ? `<span style="color:var(--corn);background:var(--corn-dim);padding:2px 7px;border-radius:3px;font-size:11px;">${dist} mi ★</span>`
+          : `<span style="color:var(--txt3);font-size:12px;">${dist} mi</span>`)
+      : '—';
     const cbStr=(e.cornBasis>=0?'+':'')+e.cornBasis.toFixed(2);
     const sbStr=e.soyBasis!==null?((e.soyBasis>=0?'+':'')+e.soyBasis.toFixed(2)):'—';
     return `<tr data-key="${key}" onclick="selectFromTable('${key}')">
-      <td><div class="elev-name-cell">${e.name}</div></td>
-      <td><div class="elev-loc-cell">${e.loc}</div></td>
+      <td><div class="elev-name-cell">${e.name}</div><div class="elev-loc-cell">${e.loc}</div></td>
       <td class="cash-price-cell">$${cornCash}</td>
       <td class="${cbClass}">${cbStr}</td>
       <td class="cash-price-cell soy">${soyCash!=='—'?'$'+soyCash:'<span style="color:var(--txt3)">—</span>'}</td>
       <td class="${sbClass}">${sbStr}</td>
-      <td style="font-size:12px;color:var(--txt3);">${dist}</td>
+      <td>${distBadge}</td>
     </tr>`;
   });
   tbody.innerHTML=rows.join('');
+  // re-highlight selected
+  const sel=document.getElementById('elev-select');
+  if(sel.value) highlightTableRow(sel.value);
 }
 
 function selectFromTable(key){
@@ -1050,7 +1091,7 @@ async function loadPrices(){
   function setCard(id,d,fmt){
     const priceEl=document.getElementById('p-'+id);
     priceEl.textContent='$'+d.price.toFixed(fmt===4?4:2);
-    priceEl.style.color=d.change>0.003?'#90c840':d.change<-0.003?'#dc6040':'#b8d44b';
+    priceEl.style.color=d.change>0.003?'var(--up)':d.change<-0.003?'var(--down)':'var(--corn)';
     document.getElementById('h-'+id).textContent=d.high.toFixed(4);
     document.getElementById('l-'+id).textContent=d.low.toFixed(4);
     document.getElementById('v-'+id).textContent=d.open.toFixed(4);
@@ -1103,21 +1144,24 @@ async function loadWeather(ulat,ulon){
     }catch{document.getElementById('wx-'+c.idx).textContent='—';}
   }));
 
-  // elevator distances
-  Object.entries(ELEVATORS).forEach(([key,e])=>{
-    const el=document.getElementById('dist-'+key);
-    if(el&&ulat)el.textContent='~'+Math.round(distMiles(ulat,ulon,e.lat,e.lon))+' mi';
-  });
-  buildCashTable();// rebuild with distances
+  // elevator distances + re-sort everything by distance
+  if(ulat&&ulon){
+    Object.entries(ELEVATORS).forEach(([key,e])=>{
+      const el=document.getElementById('dist-'+key);
+      if(el)el.textContent='~'+Math.round(distMiles(ulat,ulon,e.lat,e.lon))+' mi';
+    });
+    rebuildElevatorSelect();
+    buildCashTable();
+  }
 }
 
 function initLocation(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
       pos=>{userLat=pos.coords.latitude;userLon=pos.coords.longitude;loadWeather(userLat,userLon);},
-      ()=>{userLat=43.9;userLon=-94.5;loadWeather(43.9,-94.5);}
+      ()=>{userLat=44.03;userLon=-94.76;loadWeather(44.03,-94.76);} // fallback: near Mountain Lake MN
     );
-  } else {userLat=43.9;userLon=-94.5;loadWeather(43.9,-94.5);}
+  } else {userLat=44.03;userLon=-94.76;loadWeather(44.03,-94.76);}
 }
 
 // ===================== MARGIN CALC =====================
